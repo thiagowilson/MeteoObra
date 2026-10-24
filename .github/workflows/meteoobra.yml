@@ -1,3 +1,4 @@
+
 name: MeteoObra - Previsao diaria
 
 on:
@@ -22,8 +23,8 @@ jobs:
       - name: Instalar dependencias
         run: pip install requests
 
-      - name: Executar MeteoObra
-        run: python meteoobra.py
+      - name: Gerar previsao
+        run: python meteoobra.py > previsao.txt
 
       - name: Enviar previsao por email
         env:
@@ -34,15 +35,15 @@ jobs:
           import os
           import smtplib
           from email.message import EmailMessage
+          from pathlib import Path
 
-          msg = EmailMessage()
-          msg["Subject"] = "MeteoObra - Previsao do tempo"
-          msg["From"] = os.environ["GMAIL_ADDRESS"]
-          msg["To"] = os.environ["GMAIL_ADDRESS"]
-          msg.set_content(
-              "O MeteoObra executou a previsao meteorologica. "
-              "Consulta os registos do GitHub Actions para ver os detalhes."
-          )
+          mensagem = Path("previsao.txt").read_text(encoding="utf-8")
+
+          email = EmailMessage()
+          email["Subject"] = "MeteoObra - Previsao do tempo para Lisboa"
+          email["From"] = os.environ["GMAIL_ADDRESS"]
+          email["To"] = os.environ["GMAIL_ADDRESS"]
+          email.set_content(mensagem)
 
           with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
               smtp.starttls()
@@ -50,7 +51,7 @@ jobs:
                   os.environ["GMAIL_ADDRESS"],
                   os.environ["GMAIL_APP_PASSWORD"]
               )
-              smtp.send_message(msg)
+              smtp.send_message(email)
 
-          print("Email enviado com sucesso.")
+          print("Previsao meteorologica enviada por email.")
           PY
