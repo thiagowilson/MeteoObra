@@ -1,0 +1,27 @@
+
+name: MeteoObra - Previsao diaria
+
+on:
+  schedule:
+    - cron: "0 21 * * *"
+      timezone: "Europe/Lisbon"
+  workflow_dispatch:
+
+jobs:
+  previsao:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Obter codigo
+        uses: actions/checkout@v4
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: pip install requests
+
+      - name: Executar MeteoObra
+        run: python meteoobra.py
