@@ -3,7 +3,7 @@ name: MeteoObra - Previsao diaria
 
 on:
   schedule:
-    - cron: "0 21 * * *"
+    - cron: "30 22 * * *"
       timezone: "Europe/Lisbon"
   workflow_dispatch:
 
